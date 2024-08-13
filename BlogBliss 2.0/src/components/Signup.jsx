@@ -53,12 +53,12 @@ function Signup() {
         <form onSubmit={handleSubmit(signup)}>
           <div className="space-y-5">
             <Input
-              label="Full Name :"
+              label="Full Name:"
               placeholder="Enter your full name"
               {...register("name", { required: true })}
             />
             <Input
-              lebal="Email:"
+              label="Email:"
               placeholder="Enter Your email"
               type="email"
               {...register("email", {
@@ -71,7 +71,7 @@ function Signup() {
               })}
             />
             <Input
-              lebal="Password: "
+              label="Password: "
               placeholder="Enter your password"
               type="password"
               {...register("password", { required: true })}

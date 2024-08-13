@@ -18,7 +18,12 @@ function AllPost() {
           {post.map((posts) => {
             return (
               <div className="p-2 w-1/4">
-                <PostCard key={posts.$id} post={posts} />;
+                <PostCard
+                  key={posts.$id}
+                  post={posts}
+                  title={posts.title}
+                  featuredImage={posts.featuredImage}
+                />
               </div>
             );
           })}

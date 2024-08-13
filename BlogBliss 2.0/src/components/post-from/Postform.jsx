@@ -18,33 +18,55 @@ function Postform({ post }) {
   const navigate = useNavigate();
   const userData = useSelector((state) => state.authReducer.userData);
   const submit = async (data) => {
-    if (post) {
-      const file = data.image[0] ? service.uploadFile(data.image[0]) : null;
-      if (file) {
-        service.deleteFile(post.featuredImage);
+    let file = null;
+
+    // Check if an image was uploaded
+    if (data.image && data.image[0]) {
+      try {
+        file = await service.uploadFile(data.image[0]);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        return; // Exit if file upload fails
       }
-      const dbPost = await service.updatePost(post.$id, {
-        ...data,
-        featuredImage: file ? file.$id : undefined,
-      });
-      if (dbPost) {
-        navigate(`/post/${dbPost.$id}`);
-      }
-    } else {
-      const file = data.image[0] ? service.uploadFile(data.image[0]) : null;
-      if (file) {
-        const fileId = file.$id;
-        data.featuredImage = fileId;
+    }
+
+    try {
+      // If updating an existing post
+      if (post) {
+        // Delete the previous file if a new one is uploaded
+        if (file && post.featuredImage) {
+          await service.deleteFile(post.featuredImage);
+        }
+
+        // Update the post with the new data
+        const dbPost = await service.updatePost(post.$id, {
+          ...data,
+          featuredImage: file ? file.$id : post.featuredImage, // Use the new file's ID or the existing one
+        });
+
+        if (dbPost) {
+          navigate(`/post/${dbPost.$id}`);
+        }
+      } else {
+        // If creating a new post
+        if (file) {
+          data.featuredImage = file.$id;
+        }
+
         const dbPost = await service.createPost({
           ...data,
           user: userData.$id,
         });
+
         if (dbPost) {
-          navigate(`post/${dbPost.$id}`);
+          navigate(`/post/${dbPost.$id}`);
         }
       }
+    } catch (error) {
+      console.error("Error submitting post:", error);
     }
   };
+
   const slugTransfrom = useCallback((value) => {
     if (value && typeof value === "string") {
       return value
@@ -101,7 +123,7 @@ function Postform({ post }) {
         {post && (
           <div className="w-full mb-4">
             <img
-              src={appwriteService.getFilePreview(post.featuredImage)}
+              src={service.getFilePreview(post.featuredImage)}
               alt={post.title}
               className="rounded-lg"
             />
