@@ -5,7 +5,7 @@ import { Container, PostCard } from "../components";
 function Home() {
   const [post, setPost] = useState([]);
   useEffect(() => {
-    service.getallPost().then((posts) => {
+    service.getallPost([]).then((posts) => {
       if (posts) {
         setPost(posts.documents);
       }

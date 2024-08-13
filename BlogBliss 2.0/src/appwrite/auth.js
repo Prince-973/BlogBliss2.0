@@ -10,6 +10,7 @@ export class AuthService {
       .setProject(conf.appwriteProjectID);
     this.account = new Account(this.client);
   }
+
   async createAccount({ email, password, name }) {
     try {
       const userAccount = await this.account.create(
@@ -19,7 +20,6 @@ export class AuthService {
         name
       );
       if (userAccount) {
-        //call another method
         return this.login({ email, password });
       } else {
         return userAccount;
@@ -31,20 +31,38 @@ export class AuthService {
 
   async login({ email, password }) {
     try {
-      return await this.account.createEmailPasswordSession(email, password);
+      const session = await this.account.createEmailPasswordSession(
+        email,
+        password
+      );
+      if (session) {
+        return await this.getCurrentUser();
+      } else {
+        console.log(
+          "AppWwrite service Error::login error :: Session not created"
+        );
+        return null;
+      }
     } catch (error) {
       console.log("AppWwrite service Error::login error ::", error);
+      return null;
     }
   }
 
   async getCurrentUser() {
     try {
-      return await this.account.get();
+      const session = await this.account.getSession("current");
+      if (session) {
+        return await this.account.get();
+      } else {
+        throw new Error("No active session found.");
+      }
     } catch (error) {
       console.log("AppWwrite service Error::getUser error ::", error);
     }
     return null;
   }
+
   async logout() {
     try {
       return await this.account.deleteSessions();

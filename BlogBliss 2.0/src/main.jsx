@@ -11,12 +11,12 @@ import {
 } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Protected from "./components/AuthLayout.jsx";
-import Login from "./components/Login.jsx";
+import Login from "./pages/Login.jsx";
 import AllPost from "./pages/AllPost.jsx";
 import Post from "./pages/Post.jsx";
 import EditPost from "./pages/EditPost.jsx";
 import AddPost from "./pages/AddPost.jsx";
-import Signup from "./components/Signup.jsx";
+import Signup from "./pages/Signup.jsx";
 const router = createBrowserRouter([
   {
     path: "/",

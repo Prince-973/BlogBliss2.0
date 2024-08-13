@@ -64,16 +64,19 @@ export class Service {
   }
   async getPost(slug) {
     try {
-      return await this.databases.getDocument(
+      const post = await this.databases.getDocument(
         conf.appwriteDataBaseID,
         conf.appwriteCollectionID,
         slug
       );
+      console.log("Fetched post:", post);
+      return post;
     } catch (error) {
       console.log("Appwrite Service :: getPost ::error", error);
       return false;
     }
   }
+
   async getallPost(queries = [Query.equal("status", "active")]) {
     try {
       return await this.databases.listDocuments(
